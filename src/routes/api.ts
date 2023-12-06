@@ -14,7 +14,7 @@ dotenv.config({ path: '../../.env', processEnv: myEnv })
 const saltRounds = 10;
 export const router = Router()
 
-router.post("auth",async (req, res, next) =>{
+router.post("login",async (req, res, next) =>{
     const {mailAddress, password} = req.body
     let user: User
     try {
@@ -39,7 +39,8 @@ router.post("auth",async (req, res, next) =>{
 
     res.status(200).send({
         token: token,
-        refreshToken: refreshToken
+        refreshToken: refreshToken,
+        username:user.username
     })
 })
 
