@@ -1,7 +1,6 @@
 import express from 'express';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io'
-// import { auth } from 'express-oauth2-jwt-bearer'
 import {router} from "./routes/api";
 import pkg from './../package.json';
 
@@ -13,7 +12,6 @@ const server = createServer(app)
 const io = new Server(server)
 
 app.use(router)
-// const checkJwt = auth();
 
 server.listen(port, () =>
     console.log(`${pkg.name}: listening on port ${port}`)
