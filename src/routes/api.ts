@@ -14,6 +14,11 @@ dotenv.config({ path: '../../.env', processEnv: myEnv })
 const saltRounds = 10;
 export const router = Router()
 
+// @ts-ignore
+router.use((err, req, res, next) => {
+    res.status(403).json(err.message);
+});
+
 router.post("/login",async (req, res, next) =>{
     const {mailAddress, password} = req.body
     let user: User
@@ -37,14 +42,14 @@ router.post("/login",async (req, res, next) =>{
         email: user.mailAddress
     }, myEnv.REFRESH_SECRET, { expiresIn: '2 days' });
 
-    res.status(200).send({
+    res.status(200).json({
         token: token,
         refreshToken: refreshToken,
         username:user.username
     })
 })
 
-router.post('refresh', async (req, res) => {
+router.post('/refresh', async (req, res) => {
     const { refreshToken } = req.body
     let decoded
     try{
@@ -54,12 +59,12 @@ router.post('refresh', async (req, res) => {
         throw new Error('bad refreshToken')
     }
     const token = jwt.sign(decoded, myEnv.SECRET, { expiresIn: '1h' });
-    res.status(200).send({
+    res.status(200).json({
         token: token
     })
 })
 
-router.post('signup', async (req, res)=>{
+router.post('/signup', async (req, res)=>{
     const { mailAddress, username, password } = req.body
     if(!validateMailAddress(mailAddress)){
         throw new Error('mailAddress is invalid')
@@ -89,8 +94,3 @@ router.post('signup', async (req, res)=>{
     })
     res.status(200).end()
 })
-
-// @ts-ignore
-router.use((err, req, res, next) => {
-    res.status(403).send(err.message);
-});
