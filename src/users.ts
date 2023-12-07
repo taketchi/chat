@@ -1,7 +1,6 @@
-import {User} from "./type";
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import {PrismaClient} from '@prisma/client'
+import {PrismaClient, User} from '@prisma/client'
 const prisma = new PrismaClient()
 dayjs.extend(utc)
 
@@ -34,7 +33,7 @@ export async function deleteUser(id:string) {
             id: id
         },
         data:{
-            deletedAt: dayjs().utc().format('YYYY-MM-DD HH:mm:ss')
+            deletedAt: new Date()
         }
     })
 }
