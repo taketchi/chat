@@ -3,8 +3,16 @@ import { createServer } from 'node:http';
 import { Server } from 'socket.io'
 import {router} from "./routes/api";
 import pkg from './../package.json';
+import jwt from "jsonwebtoken";
+import {Env} from "./type";
+import dotenv from "dotenv";
+import {getUser} from "./users";
 
-
+const myEnv: Env = {
+    SECRET:"",
+    REFRESH_SECRET:""
+}
+dotenv.config({ path: '../.env', processEnv: myEnv })
 const app = express();
 // @ts-ignore
 const port = parseInt(process.env.PORT) || 8080;
@@ -18,9 +26,12 @@ server.listen(port, () =>
 );
 
 io.on('connection', socket => {
-    socket.on('signin', async ({user, room}, callback) => {
+    socket.on('signin', async ({user, room, token}, callback) => {
         try {
+            const decoded = jwt.verify(token,myEnv.SECRET)
 
+            // @ts-ignore
+            const user = await getUser(decoded.mailAddress)
             // const messages = await getRoom(room)
             // callback(null, messages)
         }
