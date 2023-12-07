@@ -17,27 +17,27 @@ model User {
   passwordHash String
   Messages     Messages[]
   createdAt    DateTime   @default(now())
-  deletedAt?    DateTime
+  deletedAt    DateTime?
 
   @@index([mailAddress])
 }
 
 model Room {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  createdAt DateTime @default(now())
-  deletedAt? DateTime
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 
   Messages Messages[]
 }
 
 model Messages {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   roomId    String
   userId    String
   message   String
-  createdAt DateTime @default(now())
-  deletedAt? DateTime
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
 
   room Room @relation(fields: [roomId], references: [id])
   user User @relation(fields: [userId], references: [id])
