@@ -1,8 +1,5 @@
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import {PrismaClient, User} from '@prisma/client'
 const prisma = new PrismaClient()
-dayjs.extend(utc)
 
 export async function createUser(user:User){
     await prisma.user.create({

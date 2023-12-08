@@ -18,7 +18,7 @@ model User {
   createdAt    DateTime  @default(now())
   deletedAt    DateTime?
 
-  Room Room[]
+  UserRoom UserRoom[]
 
   @@index([mailAddress])
 }
@@ -26,23 +26,38 @@ model User {
 model Room {
   id        String    @id @default(cuid())
   name      String    @unique
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  UserRoom UserRoom[]
+
+  @@index([name])
+}
+
+model UserRoom {
+  id        String    @id @default(cuid())
+  roomId    String
   userId    String
   createdAt DateTime  @default(now())
   deletedAt DateTime?
 
-  messages Messages[]
   user     User       @relation(fields: [userId], references: [id])
+  room     Room       @relation(fields: [roomId], references: [id])
+  Messages Messages[]
 
-  @@index([name])
+  @@unique([roomId, userId])
+  @@index([roomId])
   @@index([userId])
 }
 
 model Messages {
-  id        String    @id @default(cuid())
-  roomId    String
-  message   String
-  createdAt DateTime  @default(now())
-  deletedAt DateTime?
+  id         String    @id @default(cuid())
+  userRoomId String
+  message    String
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
 
-  room Room @relation(fields: [roomId], references: [id])
+  userRoom UserRoom @relation(fields: [userRoomId], references: [id])
+
+  @@index([userRoomId])
 }
