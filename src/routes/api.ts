@@ -2,9 +2,11 @@ import bcrypt from 'bcrypt'
 import Router from 'express-promise-router'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-import {Env, User} from '../type'
+import {Env} from '../type'
 import {createUser, getUser} from "../users";
 import {validateMailAddress, validatePassword} from "../validator";
+import {User} from '@prisma/client'
+
 
 const myEnv: Env = {
     SECRET:"",
@@ -45,7 +47,7 @@ router.post("/login",async (req, res, next) =>{
     res.status(200).json({
         token: token,
         refreshToken: refreshToken,
-        username:user.username
+        username: user.username
     })
 })
 
@@ -87,9 +89,12 @@ router.post('/signup', async (req, res)=>{
 
     const passwordHash = await bcrypt.hash(password, saltRounds)
 
+    const StringMailAddress: string = mailAddress.toString()
+    const StringUserName: string = username.toString()
+
     await createUser({
-        mailAddress: mailAddress,
-        username: username,
+        mailAddress: StringMailAddress,
+        username: StringUserName,
         passwordHash : passwordHash,
     })
     res.status(200).end()

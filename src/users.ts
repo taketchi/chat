@@ -1,7 +1,12 @@
 import {PrismaClient, User} from '@prisma/client'
 const prisma = new PrismaClient()
 
-export async function createUser(user:User){
+export async function createUser(
+    user:{
+        mailAddress:string,
+        username:string,
+        passwordHash:string
+    }){
     await prisma.user.create({
         data:{
             mailAddress:user.mailAddress,
@@ -11,7 +16,13 @@ export async function createUser(user:User){
     })
 }
 
-export async function updateUser(user:User){
+export async function updateUser(
+    user:{
+        id:string,
+        mailAddress:string,
+        username:string,
+        passwordHash:string
+    }){
     await prisma.user.update({
         where:{
             id:user.id,
