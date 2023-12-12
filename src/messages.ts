@@ -41,7 +41,7 @@ export async function getMessages(roomId: string, cursor?: Messages){
 
     const userRoomIDs = userRoom.map((ur)=> ur.id )
 
-    const config: Prisma.MessagesFindManyArgs = {
+    const args: Prisma.MessagesFindManyArgs = {
         take: 100,
         where:{
             userRoomId:{
@@ -53,9 +53,9 @@ export async function getMessages(roomId: string, cursor?: Messages){
         }
     }
     if (cursor){
-        config.cursor = {
+        args.cursor = {
             id:cursor.id
         }
     }
-    return prisma.messages.findMany(config);
+    return prisma.messages.findMany(args);
 }
