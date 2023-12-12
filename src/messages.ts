@@ -1,4 +1,4 @@
-import {Messages, PrismaClient} from '@prisma/client'
+import {Prisma, Messages, PrismaClient} from '@prisma/client'
 import {getUserRoom} from "./userRoom";
 
 const prisma = new PrismaClient()
@@ -30,33 +30,32 @@ export async function deleteMessage(messageId: string){
 }
 
 export async function getMessages(roomId: string, cursor?: Messages){
+    const userRoom = await prisma.userRoom.findMany({
+        select:{
+            id:true
+        },
+        where:{
+            roomId:roomId
+        }
+    })
+
+    const userRoomIDs = userRoom.map((ur)=> ur.id )
+
+    const config: Prisma.MessagesFindManyArgs = {
+        take: 100,
+        where:{
+            userRoomId:{
+                in:userRoomIDs
+            }
+        },
+        orderBy:{
+            createdAt: 'desc'
+        }
+    }
     if (cursor){
-        return prisma.messages.findMany({
-            take: 100,
-            cursor:{
-                id: cursor.id
-            },
-            include:{
-                userRoom:{
-                    roomId: roomId
-                }
-            },
-            orderBy:{
-                createdAt: 'desc'
-            }
-        });
+        config.cursor = {
+            id:cursor.id
+        }
     }
-    else {
-        return prisma.messages.findMany({
-            take: 100,
-            include:{
-                userRoom:{
-                    roomId: roomId
-                }
-            },
-            orderBy:{
-                createdAt: 'desc'
-            }
-        });
-    }
+    return prisma.messages.findMany(config);
 }
